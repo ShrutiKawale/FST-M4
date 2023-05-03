@@ -1,0 +1,24 @@
+2023-04-23 09:43:20,049 [main] INFO  org.apache.hadoop.ipc.Client - Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 7 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+2023-04-23 09:43:21,049 [main] INFO  org.apache.hadoop.ipc.Client - Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 8 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+2023-04-23 09:43:22,050 [main] INFO  org.apache.hadoop.ipc.Client - Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 9 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+2023-04-23 09:43:22,151 [main] WARN  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Unable to retrieve job to compute warning aggregation.
+2023-04-23 09:43:22,151 [main] INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - Success!
+2023-04-23 09:43:22,173 [main] INFO  org.apache.pig.Main - Pig script completed in 2 minutes, 55 seconds and 460 milliseconds (175460 ms)
+root@09660e9da2ed:/#  INFO  org.apache.hadoop.ipc.Client - Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 2 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)^C
+root@09660e9da2ed:/#  INFO  org.apache.hadoop.ipc.Client - Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 2 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+PS C:\Users\SHREYA> docker exec -it 09660e9da2ed1786d9878ba4db404e6e8c9b86601827bba0879c26bb689e0743 bash
+root@09660e9da2ed:/# hdfs dfs -cat /user/root/results/one/part-r-00000
+Bye     1
+Hello   1
+World   2
+root@09660e9da2ed:/# hdfs dfs -cat wordcount.pig
+-- Load input file from HDFS
+inputFile = LOAD 'hdfs:///user/root/file1.txt' AS (line);
+-- Tokeize each word in the file (Map)
+words = FOREACH inputFile GENERATE FLATTEN(TOKENIZE(line)) AS word;
+-- Combine the words from the above stage
+grpd = GROUP words BY word;
+-- Count the occurence of each word (Reduce)
+cntd = FOREACH grpd GENERATE group, COUNT(words);
+-- Store the result in HDFS
+STORE cntd INTO 'hdfs:///user/root/results/one';

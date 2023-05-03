@@ -1,0 +1,27 @@
+root@09660e9da2ed:/shruti# hdfs dfs -cat salesCsv.pig
+-- Load the CSV file
+salesTable = LOAD 'hdfs:///sales.csv' USING PigStorage(',') AS (Product:chararray,Price:chararray,Payment_Type:chararray,Name:chararray,City:chararray,State:chararray,Country:chararray);
+-- Group data using the country column
+GroupByCountry = GROUP salesTable BY Country;
+-- Generate result format
+CountByCountry = FOREACH GroupByCountry GENERATE CONCAT((chararray)$0, CONCAT(':', (chararray)COUNT($1)));
+-- Save result in HDFS folder
+STORE CountByCountry INTO 'salesOutput' USING PigStorage('\t');
+root@09660e9da2ed:/shruti# hdfs dfs -cat salesCsv.pig
+-- Load the CSV file
+salesTable = LOAD 'hdfs:///sales.csv' USING PigStorage(',') AS (Product:chararray,Price:chararray,Payment_Type:chararray,Name:chararray,City:chararray,State:chararray,Country:chararray);
+-- Group data using the country column
+GroupByCountry = GROUP salesTable BY Country;
+-- Generate result format
+CountByCountry = FOREACH GroupByCountry GENERATE CONCAT((chararray)$0, CONCAT(':', (chararray)COUNT($1)));
+-- Save result in HDFS folder
+STORE CountByCountry INTO 'salesOutput' USING PigStorage('\t');
+root@09660e9da2ed:/shruti# hdfs dfs -cat /user/root/salesOutput/part-r-00000
+France:1
+Israel:1
+Country:1
+Australia:1
+Netherlands:1
+United States:9
+United Kingdom:1
+root@09660e9da2ed:/shruti#
